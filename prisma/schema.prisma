@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Fund {
+  id            String     @id @default(uuid())
+  name          String
+  description   String?
+  months        Int        @default(12)
+  monthlyAmount Float
+  saved         Float      @default(0)
+  interest      Float      @default(0)
+  status        FundStatus @default(in_progress)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+enum FundStatus {
+  in_progress
+  completed
+  inactive
+}

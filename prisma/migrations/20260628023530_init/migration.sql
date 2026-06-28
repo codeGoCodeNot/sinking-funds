@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Fund" ADD COLUMN     "monthlyAmount" DOUBLE PRECISION NOT NULL DEFAULT 1000;
