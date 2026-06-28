@@ -5,7 +5,7 @@ import fromErrorToActionState, {
   ActionState,
   toActionState,
 } from "@/lib/to-action-state";
-import { savingPagePath } from "@/path";
+import { savingPagePath, savingsPath } from "@/path";
 import { toCent } from "@/utils/currency";
 import { revalidatePath } from "next/cache";
 import z from "zod";
@@ -36,6 +36,7 @@ const addPayment = async (
     return fromErrorToActionState(error, formData);
   }
 
+  revalidatePath(savingsPath());
   revalidatePath(savingPagePath(fundId));
   return toActionState("SUCCESS", "Payment added successfully");
 };
