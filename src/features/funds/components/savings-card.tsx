@@ -8,6 +8,11 @@ import { Fund, Payment } from "@/generated/prisma/client";
 import { toCurrencyFromCents } from "@/utils/currency";
 import isDueSoon from "../utils/id-due-soon";
 import badgeConfig from "../utils/badge-config";
+import { LucideSquareArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { savingPagePath } from "@/path";
+import { Button } from "@/components/ui/button";
+import getMonthlyRemaining from "../utils/get-monthly-remaining";
 
 type SavingsCardProps = {
   funds: (Fund & { payments: Payment[] })[];
@@ -19,6 +24,7 @@ const SavingsCard = ({ funds }: SavingsCardProps) => {
       <h2 className="text-2xl font-bold mb-4">Active Singking Funds</h2>
       <div className="flex flex-col gap-y-4">
         {funds.map((fund) => {
+          const remaining = getMonthlyRemaining(fund);
           const pct = Math.min(
             Math.round(
               (Number(fund.saved) /
@@ -40,17 +46,34 @@ const SavingsCard = ({ funds }: SavingsCardProps) => {
                         ⚠ Due in {isDueSoon(fund)} day
                         {isDueSoon(fund) !== 1 ? "s" : ""}
                       </span>
+                    )}{" "}
+                    {remaining > 0 && (
+                      <span className="text-xs text-muted-foreground">
+                        Remaining this month{" "}
+                        <span className="text-foreground font-medium">
+                          {toCurrencyFromCents(remaining)}
+                        </span>
+                      </span>
                     )}
                   </div>
-                  <span
-                    className="text-xs px-3 py-1 rounded-full font-medium"
-                    style={{
-                      background: config.badgeBg,
-                      color: config.badgeColor,
-                    }}
-                  >
-                    {config.badge}
-                  </span>
+                  <div className="flex items-center gap-x-2">
+                    <span
+                      className="text-xs px-3 py-1 rounded-full font-medium"
+                      style={{
+                        background: config.badgeBg,
+                        color: config.badgeColor,
+                      }}
+                    >
+                      {config.badge}
+                    </span>
+                    <span>
+                      <Button asChild variant="ghost" size="icon">
+                        <Link href={savingPagePath(fund.id)}>
+                          <LucideSquareArrowUpRight />
+                        </Link>
+                      </Button>
+                    </span>
+                  </div>
                 </div>
                 <div className="mt-3 flex items-center gap-3">
                   <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">

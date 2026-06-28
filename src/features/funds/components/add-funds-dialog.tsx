@@ -18,6 +18,7 @@ import { useActionState, useEffect, useState } from "react";
 import addFunds from "../actions/add-funds";
 import { toast } from "sonner";
 import { EMPTY_ACTION_STATE } from "@/lib/to-action-state";
+import Heading from "@/components/heading";
 
 type AddFundsDialogProps = {
   title: string;
@@ -39,7 +40,7 @@ const AddFundsDialog = ({ title }: AddFundsDialogProps) => {
 
   return (
     <div className="flex justify-between items-center mb-4">
-      <h1 className="text-3xl font-bold">Your Savings</h1>
+      <Heading title="Your Savings" />
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button>{title}</Button>

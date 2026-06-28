@@ -11,13 +11,17 @@ const isDueSoon = (fund: Fund & { payments: Payment[] }) => {
     (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
   );
 
-  const paidThisMonth = fund.payments.some((payment) => {
-    const date = new Date(payment.createdAt);
-    return (
-      date.getMonth() === dueDate.getMonth() &&
-      date.getFullYear() === dueDate.getFullYear()
-    );
-  });
+  const thisMonthTotal = fund.payments
+    .filter((payment) => {
+      const date = new Date(payment.createdAt);
+      return (
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+      );
+    })
+    .reduce((acc, payment) => acc + Number(payment.amount), 0);
+
+  const paidThisMonth = thisMonthTotal >= Number(fund.monthlyAmount);
 
   if (paidThisMonth || daysUntilDue > 3) return null;
   return daysUntilDue;

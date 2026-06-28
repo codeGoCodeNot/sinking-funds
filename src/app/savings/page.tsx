@@ -54,7 +54,6 @@ const SavingsPage = async () => {
           ))}
         </div>
       </div>
-
       <SavingsCard funds={funds} />
     </div>
   );
