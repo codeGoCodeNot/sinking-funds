@@ -16,12 +16,24 @@ model Fund {
   saved         Float      @default(0)
   interest      Float      @default(0)
   status        FundStatus @default(in_progress)
+  dueDay        Int        @default(1)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
+  payments      Payment[]
 }
 
 enum FundStatus {
   in_progress
   completed
   inactive
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  fundId    String
+  amount    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fund Fund @relation(fields: [fundId], references: [id])
 }

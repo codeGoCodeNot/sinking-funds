@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { useActionState, useEffect, useState } from "react";
 import addFunds from "../actions/add-funds";
 import { toast } from "sonner";
+import { EMPTY_ACTION_STATE } from "@/lib/to-action-state";
 
 type AddFundsDialogProps = {
   title: string;
@@ -24,76 +25,116 @@ type AddFundsDialogProps = {
 
 const AddFundsDialog = ({ title }: AddFundsDialogProps) => {
   const [open, setOpen] = useState(false);
-  const [actionState, action] = useActionState(addFunds, {
-    success: false,
-    message: "",
-  });
+  const [actionState, action, isPending] = useActionState(
+    addFunds,
+    EMPTY_ACTION_STATE,
+  );
 
   useEffect(() => {
-    if (actionState?.success) {
+    if (actionState?.status === "SUCCESS") {
       toast.success(actionState.message);
       setOpen(false);
     }
   }, [actionState]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>{title}</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-sm">
-        <form action={action}>
-          <DialogHeader>
-            <DialogTitle>New sinking fund</DialogTitle>
-            <DialogDescription>
-              Create a new fund to start saving toward your goal.
-            </DialogDescription>
-          </DialogHeader>
-          <FieldGroup className="py-4">
-            <Field>
-              <Label htmlFor="name">Fund name</Label>
-              <Input id="name" name="name" placeholder="Emergency Fund" />
-            </Field>
-            <Field>
-              <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
-                name="description"
-                placeholder="3 months of living expenses"
-              />
-            </Field>
-            <Field>
-              <Label htmlFor="monthlyAmount">Monthly amount (₱)</Label>
-              <Input
-                id="monthlyAmount"
-                name="monthlyAmount"
-                type="number"
-                placeholder="4000"
-              />
-            </Field>
-            <Field>
-              <Label htmlFor="months">Duration (months)</Label>
-              <Input
-                id="months"
-                name="months"
-                type="number"
-                placeholder="12"
-                defaultValue={12}
-                min={12}
-              />
-            </Field>
-          </FieldGroup>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
+    <div className="flex justify-between items-center mb-4">
+      <h1 className="text-3xl font-bold">Your Savings</h1>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button>{title}</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-sm">
+          <form action={action}>
+            <DialogHeader>
+              <DialogTitle>New sinking fund</DialogTitle>
+              <DialogDescription>
+                Create a new fund to start saving toward your goal.
+              </DialogDescription>
+            </DialogHeader>
+            <FieldGroup className="py-4">
+              <Field>
+                <Label htmlFor="name">Fund name</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  placeholder="Emergency Fund"
+                  defaultValue={
+                    (actionState.payload?.get("name") as string) ?? ""
+                  }
+                />
+                {actionState.fieldErrors?.name && (
+                  <p className="text-xs text-red-500">
+                    {actionState.fieldErrors.name[0]}
+                  </p>
+                )}
+              </Field>
+              <Field>
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  name="description"
+                  placeholder="12 months of living expenses"
+                  defaultValue={
+                    (actionState.payload?.get("description") as string) ?? ""
+                  }
+                />
+                {actionState.fieldErrors?.description && (
+                  <p className="text-xs text-red-500">
+                    {actionState.fieldErrors.description[0]}
+                  </p>
+                )}
+              </Field>
+              <Field>
+                <Label htmlFor="monthlyAmount">Monthly amount (₱)</Label>
+                <Input
+                  id="monthlyAmount"
+                  name="monthlyAmount"
+                  type="number"
+                  placeholder="4000"
+                  defaultValue={
+                    (actionState.payload?.get("monthlyAmount") as string) ?? ""
+                  }
+                />
+                {actionState.fieldErrors?.monthlyAmount && (
+                  <p className="text-xs text-red-500">
+                    {actionState.fieldErrors.monthlyAmount[0]}
+                  </p>
+                )}
+              </Field>
+              <Field>
+                <Label htmlFor="months">Duration (months)</Label>
+                <Input
+                  id="months"
+                  name="months"
+                  type="number"
+                  placeholder="12"
+                  defaultValue={
+                    (actionState.payload?.get("months") as string) ?? "12"
+                  }
+                  min={12}
+                />
+                {actionState.fieldErrors?.months && (
+                  <p className="text-xs text-red-500">
+                    {actionState.fieldErrors.months[0]}
+                  </p>
+                )}
+              </Field>
+            </FieldGroup>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Creating..." : "Create fund"}
               </Button>
-            </DialogClose>
-            <Button type="submit">Create fund</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 
