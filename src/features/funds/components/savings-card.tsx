@@ -37,10 +37,30 @@ const SavingsCard = ({ funds }: SavingsCardProps) => {
           return (
             <Card key={fund.id}>
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
+                <div>
+                  <div className="flex items-start justify-between">
                     <CardTitle className="text-base">{fund.name}</CardTitle>
-                    <CardDescription>{fund.description}</CardDescription>
+                    <div className="flex items-center gap-x-2">
+                      <span
+                        className="text-xs px-3 py-1 rounded-full font-medium"
+                        style={{
+                          background: config.badgeBg,
+                          color: config.badgeColor,
+                        }}
+                      >
+                        {config.badge}
+                      </span>
+                      <span>
+                        <Button asChild variant="ghost" size="icon">
+                          <Link href={savingPagePath(fund.id)}>
+                            <LucideSquareArrowUpRight />
+                          </Link>
+                        </Button>
+                      </span>
+                    </div>
+                  </div>
+                  <CardDescription>{fund.description}</CardDescription>
+                  <div className="flex-col gap-y-1 mt-1 flex">
                     {isDueSoon(fund) !== null && (
                       <span className="text-xs text-orange-500 font-medium">
                         ⚠ Due in {isDueSoon(fund)} day
@@ -55,24 +75,6 @@ const SavingsCard = ({ funds }: SavingsCardProps) => {
                         </span>
                       </span>
                     )}
-                  </div>
-                  <div className="flex items-center gap-x-2">
-                    <span
-                      className="text-xs px-3 py-1 rounded-full font-medium"
-                      style={{
-                        background: config.badgeBg,
-                        color: config.badgeColor,
-                      }}
-                    >
-                      {config.badge}
-                    </span>
-                    <span>
-                      <Button asChild variant="ghost" size="icon">
-                        <Link href={savingPagePath(fund.id)}>
-                          <LucideSquareArrowUpRight />
-                        </Link>
-                      </Button>
-                    </span>
                   </div>
                 </div>
                 <div className="mt-3 flex items-center gap-3">
