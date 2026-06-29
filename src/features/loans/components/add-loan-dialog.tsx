@@ -54,7 +54,10 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
       <DialogTrigger asChild>
         <Button>Add loan</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent
+        className="sm:max-w-sm"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <form action={action}>
           <DialogHeader>
             <DialogTitle>New loan</DialogTitle>
