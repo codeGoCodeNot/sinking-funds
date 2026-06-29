@@ -86,7 +86,7 @@ const HomePage = () => {
 
       <div className="flex flex-col flex-1">
         <section
-          className="mt-20 py-6 flex flex-col gap-3 overflow-hidden w-full"
+          className="mt-20 py-6 flex flex-col gap-3 overflow-hidden max-w-6xl mx-auto"
           style={{
             maskImage:
               "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
