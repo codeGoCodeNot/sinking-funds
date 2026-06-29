@@ -14,6 +14,7 @@ import { LucideArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AddPaymentsDialog from "@/features/funds/components/add-payments-dialog";
+import DeleteFundsDialog from "@/features/funds/components/delete-funds-dialog";
 
 type SavingPageProps = {
   params: Promise<{ savingId: string }>;
@@ -50,9 +51,7 @@ const SavingPage = async ({ params }: SavingPageProps) => {
             Back to savings
           </Link>
           <div className="flex items-center gap-2">
-            <Button variant="destructive" size="sm">
-              Delete
-            </Button>
+            <DeleteFundsDialog fundId={fund.id} />
             <AddPaymentsDialog fundId={fund.id} />
           </div>
         </div>

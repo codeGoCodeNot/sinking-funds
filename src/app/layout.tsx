@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Header from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
+import RedirectToast from "@/components/redirect-toast";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -44,6 +45,7 @@ export default function RootLayout({
         <main className="min-h-screen flex-1 overflow-y-auto overflow-x-hidden py-20 px-6 bg-background flex flex-col bg-grid">
           {children}
         </main>
+        <RedirectToast />
         <Toaster expand />
       </body>
     </html>
