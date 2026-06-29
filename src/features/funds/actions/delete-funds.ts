@@ -3,7 +3,7 @@
 import { setCookieByKey } from "@/actions/cookies";
 import prisma from "@/lib/prisma";
 import fromErrorToActionState from "@/lib/to-action-state";
-import { savingsPath } from "@/path";
+import { loansPagePath, savingsPath } from "@/path";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -15,6 +15,7 @@ const deleteFunds = async (fundId: string) => {
   }
 
   revalidatePath(savingsPath());
+  revalidatePath(loansPagePath());
   await setCookieByKey("toast", "Fund deleted successfully");
   redirect(savingsPath());
 };
