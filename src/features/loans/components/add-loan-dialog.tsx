@@ -42,6 +42,8 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
     if (actionState?.status === "SUCCESS") {
       toast.success(actionState.message);
       setOpen(false);
+    } else if (actionState?.status === "ERROR") {
+      toast.error(actionState.message);
     }
   }, [actionState]);
 

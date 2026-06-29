@@ -8,7 +8,7 @@ import { loansPagePath } from "@/path";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 import { INTEREST_RATES } from "../interest-rate";
-import { toCent } from "@/utils/currency";
+import { toCent, toCurrencyFromCents } from "@/utils/currency";
 import prisma from "@/lib/prisma";
 import { addDays } from "date-fns";
 
@@ -33,6 +33,32 @@ const addLoan = async (_actionState: ActionState, formData: FormData) => {
     const amount = toCent(data.amount);
     const interest = Math.round(amount * rate);
     const dueDate = addDays(new Date(), data.duration * 30);
+
+    const fund = await prisma.fund.findUnique({
+      where: { id: data.fundId },
+      include: {
+        loans: {
+          where: { status: { in: ["active", "overdue"] } },
+          select: { amount: true },
+        },
+      },
+    });
+
+    if (!fund) return toActionState("ERROR", "Fund not found");
+
+    const totalActiveLoans = fund.loans.reduce(
+      (acc, loan) => acc + +loan.amount,
+      0,
+    );
+
+    const maxLoanable = +fund.saved * 0.8;
+
+    if (totalActiveLoans + amount > maxLoanable) {
+      return toActionState(
+        "ERROR",
+        `Loan exceeds 80% of fund savings. Max loanable: ${toCurrencyFromCents(maxLoanable - totalActiveLoans)}`,
+      );
+    }
 
     await prisma.loan.create({
       data: {

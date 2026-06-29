@@ -10,6 +10,7 @@ import { toCurrencyFromCents } from "@/utils/currency";
 import { INTEREST_RATES } from "@/features/loans/interest-rate";
 import AddLoanDialog from "@/features/loans/components/add-loan-dialog";
 import getFunds from "@/features/funds/queries/get-funds";
+import LoansCard from "@/features/loans/components/loans-card";
 
 const loanBadgeConfig = {
   active: {
@@ -97,92 +98,15 @@ const LoansPage = async () => {
               (loan.status === "overdue" ? 10 : 0);
 
             return (
-              <Card key={loan.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-base">
-                        {loan.borrower}
-                      </CardTitle>
-                      <CardDescription>{loan.fund.name}</CardDescription>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {loan.isGuarantor && (
-                        <span
-                          className="text-xs px-3 py-1 rounded-full font-medium"
-                          style={{ background: "#F1EFE8", color: "#444441" }}
-                        >
-                          Guarantor
-                        </span>
-                      )}
-                      <span
-                        className="text-xs px-3 py-1 rounded-full font-medium"
-                        style={{
-                          background: config.badgeBg,
-                          color: config.badgeColor,
-                        }}
-                      >
-                        {config.badge}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 flex items-center gap-3">
-                    <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full"
-                        style={{ width: `${pct}%`, background: config.color }}
-                      />
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {pct}%
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between mt-1">
-                    <span className="text-xs text-muted-foreground">
-                      Paid{" "}
-                      <span className="text-foreground font-medium">
-                        {toCurrencyFromCents(paid)}
-                      </span>
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      Total{" "}
-                      <span className="text-foreground font-medium">
-                        {toCurrencyFromCents(total)}
-                      </span>
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between mt-1">
-                    <span className="text-xs text-muted-foreground">
-                      Interest{" "}
-                      <span
-                        className="font-medium"
-                        style={{ color: "#27500A" }}
-                      >
-                        +{toCurrencyFromCents(+loan.interest)} ({rate}%)
-                      </span>
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      Due{" "}
-                      <span
-                        className="font-medium"
-                        style={{
-                          color:
-                            loan.status === "overdue" ? "#791F1F" : undefined,
-                        }}
-                      >
-                        {new Date(loan.dueDate).toLocaleDateString("en-PH", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
-                      </span>
-                    </span>
-                  </div>
-                </CardHeader>
-              </Card>
+              <LoansCard
+                key={loan.id}
+                loan={loan}
+                config={config}
+                total={total}
+                paid={paid}
+                pct={pct}
+                rate={rate}
+              />
             );
           })}
         </div>
