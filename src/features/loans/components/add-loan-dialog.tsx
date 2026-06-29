@@ -35,6 +35,8 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
   const [open, setOpen] = useState(false);
   const [fundId, setFundId] = useState("");
   const [duration, setDuration] = useState("");
+  const [borrower, setBorrower] = useState("");
+  const [amount, setAmount] = useState("");
   const [actionState, action, isPending] = useActionState(
     addLoan,
     EMPTY_ACTION_STATE,
@@ -44,6 +46,10 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
     if (actionState?.status === "SUCCESS") {
       toast.success(actionState.message);
       setOpen(false);
+      setFundId("");
+      setDuration("");
+      setBorrower("");
+      setAmount("");
     } else if (actionState?.status === "ERROR") {
       toast.error(actionState.message);
     }
@@ -54,7 +60,18 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
       <DialogTrigger asChild>
         <Button>Add loan</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent
+        className="sm:max-w-sm"
+        onInteractOutside={(e) => {
+          if (
+            (e.target as HTMLElement).closest(
+              "[data-radix-popper-content-wrapper]",
+            )
+          ) {
+            e.preventDefault();
+          }
+        }}
+      >
         <form action={action}>
           <DialogHeader>
             <DialogTitle>New loan</DialogTitle>
@@ -66,7 +83,7 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
             <Field>
               <Label htmlFor="fundId">Fund</Label>
               <input type="hidden" name="fundId" value={fundId} />
-              <Select onValueChange={setFundId}>
+              <Select value={fundId} onValueChange={setFundId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a fund" />
                 </SelectTrigger>
@@ -90,9 +107,8 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
                 id="borrower"
                 name="borrower"
                 placeholder="Juan dela Cruz"
-                defaultValue={
-                  (actionState.payload?.get("borrower") as string) ?? ""
-                }
+                value={borrower}
+                onChange={(e) => setBorrower(e.target.value)}
               />
               {actionState.fieldErrors?.borrower && (
                 <p className="text-xs text-red-500">
@@ -107,9 +123,8 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
                 name="amount"
                 type="number"
                 placeholder="5000"
-                defaultValue={
-                  (actionState.payload?.get("amount") as string) ?? ""
-                }
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
               />
               {actionState.fieldErrors?.amount && (
                 <p className="text-xs text-red-500">
@@ -120,7 +135,7 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
             <Field>
               <Label htmlFor="duration">Duration</Label>
               <input type="hidden" name="duration" value={duration} />
-              <Select onValueChange={setDuration}>
+              <Select value={duration} onValueChange={setDuration}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select duration" />
                 </SelectTrigger>
