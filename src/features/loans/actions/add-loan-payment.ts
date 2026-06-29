@@ -5,7 +5,7 @@ import fromErrorToActionState, {
   ActionState,
   toActionState,
 } from "@/lib/to-action-state";
-import { loanPagePath, loansPagePath } from "@/path";
+import { loanPagePath, loansPagePath, savingsPath } from "@/path";
 import { toCent, toCurrencyFromCents } from "@/utils/currency";
 import { revalidatePath } from "next/cache";
 import z from "zod";
@@ -73,6 +73,7 @@ const addLoanPayment = async (
 
   revalidatePath(loansPagePath());
   revalidatePath(loanPagePath(loanId));
+  revalidatePath(savingsPath());
   return toActionState("SUCCESS", "Payment added successfully");
 };
 
