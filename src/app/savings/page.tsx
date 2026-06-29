@@ -20,13 +20,33 @@ const SavingsPage = async () => {
     return pct > acc ? pct : acc;
   }, 0);
 
+  const now = new Date();
+  const thisMonth = funds.reduce((account, fund) => {
+    return (
+      account +
+      fund.payments
+        .filter((payment) => {
+          const paymentDate = new Date(payment.createdAt);
+          return (
+            paymentDate.getMonth() === now.getMonth() &&
+            paymentDate.getFullYear() === now.getFullYear()
+          );
+        })
+        .reduce((acc, payment) => acc + +payment.amount, 0)
+    );
+  }, 0);
+
   const cards = [
     {
       title: "Total saved",
       description: toCurrencyFromCents(totalSaved),
       emoji: "💰",
     },
-    { title: "This month", description: "₱0", emoji: "📅" },
+    {
+      title: "This month",
+      description: toCurrencyFromCents(thisMonth),
+      emoji: "📅",
+    },
     { title: "Nearest goal", description: `${nearestGoal}%`, emoji: "🎯" },
     {
       title: "Total interest",
