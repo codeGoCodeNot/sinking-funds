@@ -1,4 +1,9 @@
-import { savingsPath, loansPath, activityPath, membersPath } from "@/path";
+import {
+  savingsPath,
+  loansPagePath,
+  activityPagePath,
+  membersPagePath,
+} from "@/path";
 import Link from "next/link";
 
 const cards = [
@@ -9,19 +14,19 @@ const cards = [
     description: "Track your sinking funds",
   },
   {
-    href: loansPath(),
+    href: loansPagePath(),
     emoji: "🤝",
     title: "Loans",
     description: "Lend to the community",
   },
   {
-    href: activityPath(),
+    href: activityPagePath(),
     emoji: "📊",
     title: "Activity",
     description: "Recent transactions",
   },
   {
-    href: membersPath(),
+    href: membersPagePath(),
     emoji: "👥",
     title: "Members",
     description: "View fund members",
@@ -134,7 +139,7 @@ const HomePage = () => {
               Start a fund
             </Link>
             <Link
-              href={membersPath()}
+              href={membersPagePath()}
               className="px-6 py-3 rounded-xl border border-background/20 text-background font-semibold text-sm hover:bg-white/10 transition-colors text-center"
             >
               Browse members

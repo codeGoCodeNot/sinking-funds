@@ -20,6 +20,7 @@ model Fund {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   payments      Payment[]
+  loans         Loan[]
 }
 
 enum FundStatus {
@@ -36,4 +37,37 @@ model Payment {
   updatedAt DateTime @updatedAt
 
   fund Fund @relation(fields: [fundId], references: [id], onDelete: Cascade)
+}
+
+model Loan {
+  id          String     @id @default(uuid())
+  fundId      String
+  borrower    String
+  isGuarantor Boolean    @default(false)
+  amount      Float
+  duration    Float
+  interest    Float
+  status      LoanStatus @default(active)
+  dueDate     DateTime
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  fund         Fund           @relation(fields: [fundId], references: [id], onDelete: Cascade)
+  loanPayments LoanPayments[]
+}
+
+enum LoanStatus {
+  active
+  paid
+  overdue
+}
+
+model LoanPayments {
+  id        String   @id @default(uuid())
+  loanId    String
+  amount    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  loan Loan @relation(fields: [loanId], references: [id])
 }

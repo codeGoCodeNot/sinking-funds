@@ -1,8 +1,7 @@
 export const homePagePath = () => "/";
 export const savingPagePath = (savingId: string) => `/savings/${savingId}`;
-
-// features
 export const savingsPath = () => "/savings";
-export const loansPath = () => "/loans";
-export const activityPath = () => "/activity";
-export const membersPath = () => "/members";
+export const loansPagePath = () => "/loans";
+export const loanPagePath = (loanId: string) => `/loans/${loanId}`;
+export const activityPagePath = () => "/activity";
+export const membersPagePath = () => "/members";
