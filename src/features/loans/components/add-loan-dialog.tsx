@@ -33,6 +33,8 @@ type AddLoanDialogProps = {
 
 const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
   const [open, setOpen] = useState(false);
+  const [fundId, setFundId] = useState("");
+  const [duration, setDuration] = useState("");
   const [actionState, action, isPending] = useActionState(
     addLoan,
     EMPTY_ACTION_STATE,
@@ -63,7 +65,8 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
           <FieldGroup className="py-4">
             <Field>
               <Label htmlFor="fundId">Fund</Label>
-              <Select name="fundId">
+              <input type="hidden" name="fundId" value={fundId} />
+              <Select onValueChange={setFundId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a fund" />
                 </SelectTrigger>
@@ -116,7 +119,8 @@ const AddLoanDialog = ({ funds }: AddLoanDialogProps) => {
             </Field>
             <Field>
               <Label htmlFor="duration">Duration</Label>
-              <Select name="duration">
+              <input type="hidden" name="duration" value={duration} />
+              <Select onValueChange={setDuration}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select duration" />
                 </SelectTrigger>
