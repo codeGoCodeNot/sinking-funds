@@ -1,10 +1,14 @@
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { loanPagePath } from "@/path";
 import { toCurrencyFromCents } from "@/utils/currency";
+import { LucideSquareArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 type LoansCardProps = {
   loan: {
@@ -66,6 +70,11 @@ const LoansCard = ({
             >
               {config.badge}
             </span>
+            <Button asChild variant="ghost" size="icon">
+              <Link href={loanPagePath(loan.id)}>
+                <LucideSquareArrowUpRight strokeWidth={1.5} />
+              </Link>
+            </Button>
           </div>
         </div>
 

@@ -1,42 +1,42 @@
+import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
-import AddPaymentsDialog from "@/features/funds/components/add-payments-dialog";
-import DeleteFundsDialog from "@/features/funds/components/delete-funds-dialog";
-import getFund from "@/features/funds/queries/get-fund";
-import badgeConfig from "@/features/funds/utils/badge-config";
-import isDueSoon from "@/features/funds/utils/id-due-soon";
-import SavingsCardPayment from "@/features/funds/components/savings-card-payment";
-import { savingsPath } from "@/path";
+import DeleteLoansDialog from "@/features/loans/components/delete-loan-dialog";
+import LoanCardPayment from "@/features/loans/components/loan-card-payments";
+import LoanPaymentsDialog from "@/features/loans/components/loan-payments-dialog";
+import { INTEREST_RATES } from "@/features/loans/interest-rate";
+import getLoan from "@/features/loans/queries/get-loan";
+import { loanBadgeConfig } from "@/features/loans/utils/loan-badge-config";
+import { loansPagePath } from "@/path";
 import { toCurrencyFromCents } from "@/utils/currency";
 import { LucideArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-type SavingPageProps = {
-  params: Promise<{ savingId: string }>;
+type LoanPageProps = {
+  params: Promise<{ loanId: string }>;
 };
 
-const SavingPage = async ({ params }: SavingPageProps) => {
-  const { savingId } = await params;
-  const fund = await getFund(savingId);
+const LoanPage = async ({ params }: LoanPageProps) => {
+  const { loanId } = await params;
 
-  if (!fund) notFound();
+  const loan = await getLoan(loanId);
+  if (!loan) notFound();
 
-  const pct = Math.min(
-    Math.round(
-      (Number(fund.saved) / (Number(fund.monthlyAmount) * fund.months)) * 100,
-    ),
-    100,
-  );
-  const config = badgeConfig[fund.status as keyof typeof badgeConfig];
-  const dueDays = isDueSoon(fund);
-  const monthsPaid = Math.floor(
-    Number(fund.saved) / Number(fund.monthlyAmount),
-  );
+  const total = +loan.amount + +loan.interest;
+  const paid = loan.loanPayments.reduce((acc, p) => acc + +p.amount, 0);
+  const pct = Math.min(Math.round((paid / total) * 100), 100);
+  const config = loanBadgeConfig[loan.status as keyof typeof loanBadgeConfig];
+  const rate =
+    INTEREST_RATES[String(loan.duration)] * 100 +
+    (loan.isGuarantor ? 5 : 0) +
+    (loan.status === "overdue" ? 10 : 0);
+
+  if (!loan) notFound();
 
   return (
     <div className="flex flex-1 flex-col py-10 gap-y-10">
@@ -44,61 +44,66 @@ const SavingPage = async ({ params }: SavingPageProps) => {
         {/* Nav + actions */}
         <div className="flex items-center justify-between">
           <Link
-            href={savingsPath()}
+            href={loansPagePath()}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
           >
             <LucideArrowLeft size={16} />
-            Back to savings
+            Back to loans
           </Link>
           <div className="flex items-center gap-2">
-            <DeleteFundsDialog fundId={fund.id} />
-            <AddPaymentsDialog fundId={fund.id} />
+            <DeleteLoansDialog loanId={loan.id} />
+            <LoanPaymentsDialog loanId={loan.id} />
           </div>
         </div>
 
-        {/* Fund title + badges */}
+        {/* Loan title + badges */}
         <div>
-          <h1 className="text-3xl font-bold">{fund.name}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {fund.description}
-          </p>
+          <h1 className="text-3xl font-bold">{loan.borrower}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{loan.fund.name}</p>
           <div className="flex items-center gap-2 mt-3">
+            {loan.isGuarantor && (
+              <span
+                className="text-xs px-3 py-1 rounded-full font-medium"
+                style={{ background: "#F1EFE8", color: "#444441" }}
+              >
+                Guarantor
+              </span>
+            )}
             <span
               className="text-xs px-3 py-1 rounded-full font-medium"
               style={{ background: config.badgeBg, color: config.badgeColor }}
             >
               {config.badge}
             </span>
-            {dueDays !== null && (
-              <span className="text-xs px-3 py-1 rounded-full font-medium bg-orange-50 text-orange-600">
-                ⚠ Due in {dueDays} day{dueDays !== 1 ? "s" : ""}
-              </span>
-            )}
           </div>
         </div>
 
-        {/* Stat cards — same as savings page */}
+        {/* Stat cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
             {
-              title: "Total saved",
-              description: toCurrencyFromCents(Number(fund.saved)),
-              emoji: "💰",
+              title: "Loan amount",
+              description: toCurrencyFromCents(+loan.amount),
+              emoji: "💸",
             },
             {
-              title: "Monthly amount",
-              description: toCurrencyFromCents(Number(fund.monthlyAmount)),
-              emoji: "📅",
+              title: "Interest",
+              description: `+${toCurrencyFromCents(+loan.interest)} (${rate}%)`,
+              emoji: "📈",
             },
             {
               title: "Duration",
-              description: `${fund.months} months`,
+              description: `${loan.duration} month${loan.duration !== 1 ? "s" : ""}`,
               emoji: "🎯",
             },
             {
-              title: "Interest earned",
-              description: `+${toCurrencyFromCents(Number(fund.interest))}`,
-              emoji: "📈",
+              title: "Due date",
+              description: new Date(loan.dueDate).toLocaleDateString("en-PH", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              }),
+              emoji: "📅",
             },
           ].map((s) => (
             <Card className="border-border shadow-sm" key={s.title}>
@@ -119,7 +124,7 @@ const SavingPage = async ({ params }: SavingPageProps) => {
           <CardHeader>
             <div className="flex justify-between text-sm text-muted-foreground mb-2">
               <span>
-                Progress — {monthsPaid} of {fund.months} months
+                Paid {toCurrencyFromCents(paid)} of {toCurrencyFromCents(total)}
               </span>
               <span>{pct}%</span>
             </div>
@@ -135,14 +140,14 @@ const SavingPage = async ({ params }: SavingPageProps) => {
         {/* Payment history */}
         <div className="bg-background">
           <h2 className="text-2xl font-bold mb-4">Payment history</h2>
-          {fund.payments.length === 0 ? (
+          {loan.loanPayments.length === 0 ? (
             <div className="text-center text-sm text-muted-foreground border border-dashed shadow-sm rounded-lg py-8">
-              No payments yet. Add your first payment.
+              No payments yet. Add the first payment.
             </div>
           ) : (
             <div className="flex flex-col gap-y-4">
-              {fund.payments.map((payment) => (
-                <SavingsCardPayment key={payment.id} payment={payment} />
+              {loan.loanPayments.map((payment) => (
+                <LoanCardPayment key={payment.id} payment={payment} />
               ))}
             </div>
           )}
@@ -152,4 +157,4 @@ const SavingPage = async ({ params }: SavingPageProps) => {
   );
 };
 
-export default SavingPage;
+export default LoanPage;

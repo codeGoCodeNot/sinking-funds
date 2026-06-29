@@ -2,7 +2,6 @@
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -12,17 +11,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useActionState } from "react";
-import deleteFunds from "../actions/delete-funds";
-import { EMPTY_ACTION_STATE } from "@/lib/to-action-state";
-import { Button } from "@/components/ui/button";
 
-type DeleteFundsDialogProps = {
-  fundId: string;
+import { Button } from "@/components/ui/button";
+import { EMPTY_ACTION_STATE } from "@/lib/to-action-state";
+import deleteLoans from "../actions/delete-loans";
+
+type DeleteLoansDialogProps = {
+  loanId: string;
 };
 
-const DeleteFundsDialog = ({ fundId }: DeleteFundsDialogProps) => {
+const DeleteLoansDialog = ({ loanId }: DeleteLoansDialogProps) => {
   const [_actionState, action, isPending] = useActionState(
-    deleteFunds.bind(null, fundId),
+    deleteLoans.bind(null, loanId),
     EMPTY_ACTION_STATE,
   );
   return (
@@ -35,16 +35,16 @@ const DeleteFundsDialog = ({ fundId }: DeleteFundsDialogProps) => {
       <AlertDialogContent>
         <form action={action}>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete fund</AlertDialogTitle>
+            <AlertDialogTitle>Delete loan</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete this fund and all its payments. This
+              This will permanently delete this loan and all its payments. This
               cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-4">
             <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
             <Button type="submit" variant="destructive" disabled={isPending}>
-              {isPending ? "Deleting..." : "Delete fund"}
+              {isPending ? "Deleting..." : "Delete loan"}
             </Button>
           </AlertDialogFooter>
         </form>
@@ -53,4 +53,4 @@ const DeleteFundsDialog = ({ fundId }: DeleteFundsDialogProps) => {
   );
 };
 
-export default DeleteFundsDialog;
+export default DeleteLoansDialog;

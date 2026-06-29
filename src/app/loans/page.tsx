@@ -11,27 +11,8 @@ import { INTEREST_RATES } from "@/features/loans/interest-rate";
 import AddLoanDialog from "@/features/loans/components/add-loan-dialog";
 import getFunds from "@/features/funds/queries/get-funds";
 import LoansCard from "@/features/loans/components/loans-card";
-
-const loanBadgeConfig = {
-  active: {
-    badge: "Active",
-    badgeBg: "#EEEDFE",
-    badgeColor: "#3C3489",
-    color: "#3C3489",
-  },
-  paid: {
-    badge: "Paid",
-    badgeBg: "#E1F5EE",
-    badgeColor: "#085041",
-    color: "#085041",
-  },
-  overdue: {
-    badge: "Overdue",
-    badgeBg: "#FCEBEB",
-    badgeColor: "#791F1F",
-    color: "#791F1F",
-  },
-};
+import { loanBadgeConfig } from "@/features/loans/utils/loan-badge-config";
+import { savingsPath } from "@/path";
 
 const LoansPage = async () => {
   const loans = await getLoans();
@@ -61,7 +42,12 @@ const LoansPage = async () => {
     <div className="flex flex-1 flex-col py-10 gap-y-10">
       <div className="max-w-2xl mx-auto w-full">
         <div className="flex justify-between items-center mb-4">
-          <Heading title="Your Loans" />
+          <Heading
+            title="Your Loans"
+            description="Track loans from your funds. Go to"
+            descriptionHref={savingsPath()}
+            descriptionLinkLabel="savings"
+          />
           <AddLoanDialog funds={funds} />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-auto w-full max-w-4xl">

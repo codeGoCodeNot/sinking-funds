@@ -19,6 +19,7 @@ import addFunds from "../actions/add-funds";
 import { toast } from "sonner";
 import { EMPTY_ACTION_STATE } from "@/lib/to-action-state";
 import Heading from "@/components/heading";
+import { loansPagePath } from "@/path";
 
 type AddFundsDialogProps = {
   title: string;
@@ -40,7 +41,12 @@ const AddFundsDialog = ({ title }: AddFundsDialogProps) => {
 
   return (
     <div className="flex justify-between items-center mb-4">
-      <Heading title="Your Savings" />
+      <Heading
+        title="Your Savings"
+        description="Manage your sinking funds. View your"
+        descriptionHref={loansPagePath()}
+        descriptionLinkLabel="loans"
+      />
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button>{title}</Button>
