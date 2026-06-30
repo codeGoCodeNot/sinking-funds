@@ -1,5 +1,6 @@
 "use server";
 
+import { MyBig } from "@/lib/big";
 import prisma from "@/lib/prisma";
 import fromErrorToActionState, {
   ActionState,
@@ -53,17 +54,36 @@ const addLoanPayment = async (
 
     const isFullyPaid = totalPaid + amount >= total;
 
+    const splitPrincipal = (paymentAmount: number) =>
+      new MyBig(paymentAmount).mul(loan.amount).div(total).round(0).toNumber();
+
+    const principalCreditedSofar = loan.loanPayments.reduce((account, payment) => account + splitPrincipal(+payment.amount), 0);
+
+    let principalPortion = splitPrincipal(amount);
+
+    if (isFullyPaid) {
+      principalPortion = loan.amount - principalCreditedSofar;
+    }
+
+    const interestPortion = amount - principalPortion;
+
     await prisma.$transaction(async (tx) => {
-      await tx.loanPayment.create({ data: { loanId, amount } });
+      await tx.loanPayment.create({
+        data: { loanId, amount },
+      });
+
+      await tx.fund.update({
+        where: { id: loan.fundId },
+        data: {
+          saved: { increment: principalPortion },
+          interest: { increment: interestPortion },
+        }
+      })
 
       if (isFullyPaid) {
         await tx.loan.update({
           where: { id: loanId },
           data: { status: "paid" },
-        });
-        await tx.fund.update({
-          where: { id: loan.fundId },
-          data: { interest: { increment: +loan.interest } },
         });
       }
     });
