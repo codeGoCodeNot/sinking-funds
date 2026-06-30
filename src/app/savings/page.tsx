@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import StatCard from "@/components/stat-card";
 import AddFundsDialog from "@/features/funds/components/add-funds-dialog";
 import SavingsCard from "@/features/funds/components/savings-card";
 import getFunds from "@/features/funds/queries/get-funds";
@@ -36,42 +31,32 @@ const SavingsPage = async () => {
     );
   }, 0);
 
-  const cards = [
-    {
-      title: "Total saved",
-      description: toCurrencyFromCents(totalSaved),
-      emoji: "💰",
-    },
-    {
-      title: "This month",
-      description: toCurrencyFromCents(thisMonth),
-      emoji: "📅",
-    },
-    { title: "Nearest goal", description: `${nearestGoal}%`, emoji: "🎯" },
-    {
-      title: "Total interest",
-      description: toCurrencyFromCents(totalInterest),
-      emoji: "📈",
-    },
-  ];
-
   return (
     <div className="flex flex-1 flex-col py-10 gap-y-10">
       <div className="max-w-2xl mx-auto w-full">
         <AddFundsDialog title="Add Funds" />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-auto w-full max-w-4xl">
-          {cards.map((card, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {card.title}
-                </CardTitle>
-                <CardDescription>
-                  {card.emoji} {card.description}
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
+          <StatCard
+            label="Contributions"
+            value={toCurrencyFromCents(totalSaved)}
+            emoji="💰"
+          />
+          <StatCard
+            label="This month"
+            value={toCurrencyFromCents(thisMonth)}
+            emoji="📅"
+          />
+          <StatCard
+            label="Closest goal"
+            value={`${nearestGoal}%`}
+            emoji="🎯"
+          />
+          <StatCard
+            label="Interest earned"
+            value={toCurrencyFromCents(totalInterest)}
+            emoji="📈"
+            tone="positive"
+          />
         </div>
       </div>
       <SavingsCard funds={funds} />

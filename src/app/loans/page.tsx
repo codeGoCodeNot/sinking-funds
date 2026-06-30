@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import StatCard from "@/components/stat-card";
 import Heading from "@/components/heading";
 import getLoans from "@/features/loans/queries/get-loans";
 import { toCurrencyFromCents } from "@/utils/currency";
@@ -23,21 +18,6 @@ const LoansPage = async () => {
   const activeCount = loans.filter((loan) => loan.status === "active").length;
   const overdueCount = loans.filter((loan) => loan.status === "overdue").length;
 
-  const cards = [
-    {
-      title: "Total loaned out",
-      description: toCurrencyFromCents(totalLoaned),
-      emoji: "💸",
-    },
-    {
-      title: "Total interest",
-      description: toCurrencyFromCents(totalInterest),
-      emoji: "📈",
-    },
-    { title: "Active loans", description: String(activeCount), emoji: "🔄" },
-    { title: "Overdue loans", description: String(overdueCount), emoji: "⚠️" },
-  ];
-
   return (
     <div className="flex flex-1 flex-col py-10 gap-y-10">
       <div className="max-w-2xl mx-auto w-full">
@@ -51,18 +31,27 @@ const LoansPage = async () => {
           <AddLoanDialog funds={funds} />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-auto w-full max-w-4xl">
-          {cards.map((card, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {card.title}
-                </CardTitle>
-                <CardDescription>
-                  {card.emoji} {card.description}
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
+          <StatCard
+            label="Total loaned out"
+            value={toCurrencyFromCents(totalLoaned)}
+            emoji="💸"
+          />
+          <StatCard
+            label="Interest earned"
+            value={toCurrencyFromCents(totalInterest)}
+            emoji="📈"
+            tone="positive"
+          />
+          <StatCard
+            label="Active loans"
+            value={String(activeCount)}
+            emoji="🔄"
+          />
+          <StatCard
+            label="Overdue loans"
+            value={String(overdueCount)}
+            emoji="⚠️"
+          />
         </div>
       </div>
 

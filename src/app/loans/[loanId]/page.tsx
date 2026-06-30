@@ -1,10 +1,6 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
+import StatCard from "@/components/stat-card";
 import DeleteLoansDialog from "@/features/loans/components/delete-loan-dialog";
 import LoanCardPayment from "@/features/loans/components/loan-card-payments";
 import LoanPaymentsDialog from "@/features/loans/components/loan-payments-dialog";
@@ -80,43 +76,31 @@ const LoanPage = async ({ params }: LoanPageProps) => {
 
         {/* Stat cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
-            {
-              title: "Loan amount",
-              description: toCurrencyFromCents(+loan.amount),
-              emoji: "💸",
-            },
-            {
-              title: "Interest",
-              description: `+${toCurrencyFromCents(+loan.interest)} (${rate}%)`,
-              emoji: "📈",
-            },
-            {
-              title: "Duration",
-              description: `${loan.duration} month${loan.duration !== 1 ? "s" : ""}`,
-              emoji: "🎯",
-            },
-            {
-              title: "Due date",
-              description: new Date(loan.dueDate).toLocaleDateString("en-PH", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }),
-              emoji: "📅",
-            },
-          ].map((s) => (
-            <Card className="border-border shadow-sm" key={s.title}>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {s.title}
-                </CardTitle>
-                <CardDescription>
-                  {s.emoji} {s.description}
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
+          <StatCard
+            label="Loan amount"
+            value={toCurrencyFromCents(+loan.amount)}
+            emoji="💸"
+          />
+          <StatCard
+            label="Interest"
+            value={`+${toCurrencyFromCents(+loan.interest)} (${rate}%)`}
+            emoji="📈"
+            tone="positive"
+          />
+          <StatCard
+            label="Duration"
+            value={`${loan.duration} month${loan.duration !== 1 ? "s" : ""}`}
+            emoji="🎯"
+          />
+          <StatCard
+            label="Due date"
+            value={new Date(loan.dueDate).toLocaleDateString("en-PH", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+            emoji="📅"
+          />
         </div>
 
         {/* Progress */}

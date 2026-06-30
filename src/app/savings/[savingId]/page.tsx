@@ -1,9 +1,8 @@
 import {
   Card,
-  CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
+import StatCard from "@/components/stat-card";
 import AddPaymentsDialog from "@/features/funds/components/add-payments-dialog";
 import DeleteFundsDialog from "@/features/funds/components/delete-funds-dialog";
 import getFund from "@/features/funds/queries/get-fund";
@@ -77,41 +76,29 @@ const SavingPage = async ({ params }: SavingPageProps) => {
           </div>
         </div>
 
-        {/* Stat cards — same as savings page */}
+        {/* Stat cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
-            {
-              title: "Total saved",
-              description: toCurrencyFromCents(Number(fund.saved)),
-              emoji: "💰",
-            },
-            {
-              title: "Monthly amount",
-              description: toCurrencyFromCents(Number(fund.monthlyAmount)),
-              emoji: "📅",
-            },
-            {
-              title: "Duration",
-              description: `${fund.months} months`,
-              emoji: "🎯",
-            },
-            {
-              title: "Interest earned",
-              description: `+${toCurrencyFromCents(Number(fund.interest))}`,
-              emoji: "📈",
-            },
-          ].map((s) => (
-            <Card className="border-border shadow-sm" key={s.title}>
-              <CardHeader>
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {s.title}
-                </CardTitle>
-                <CardDescription>
-                  {s.emoji} {s.description}
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
+          <StatCard
+            label="Saved"
+            value={toCurrencyFromCents(Number(fund.saved))}
+            emoji="💰"
+          />
+          <StatCard
+            label="Monthly target"
+            value={toCurrencyFromCents(Number(fund.monthlyAmount))}
+            emoji="📅"
+          />
+          <StatCard
+            label="Duration"
+            value={`${fund.months} months`}
+            emoji="🎯"
+          />
+          <StatCard
+            label="Interest earned"
+            value={`+${toCurrencyFromCents(Number(fund.interest))}`}
+            emoji="📈"
+            tone="positive"
+          />
         </div>
 
         {/* Progress */}
