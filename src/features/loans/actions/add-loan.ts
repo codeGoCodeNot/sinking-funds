@@ -34,45 +34,43 @@ const addLoan = async (_actionState: ActionState, formData: FormData) => {
     const interest = Math.round(amount * rate);
     const dueDate = addDays(new Date(), data.duration * 30);
 
-    const fund = await prisma.fund.findUnique({
-      where: { id: data.fundId },
-      include: {
-        loans: {
-          where: { status: { in: ["active", "overdue"] } },
-          select: { amount: true },
+    await prisma.$transaction(async (tx) => {
+      const lockedFund = await tx.$queryRaw<{ id: string; saved: number }[]>
+        `SELECT id, saved FROM "Fund" WHERE id = ${data.fundId} FOR UPDATE`;
+
+      if (!lockedFund.length) throw new Error("Fund not found");
+
+      const activeLoans = await tx.loan.findMany({
+        where: {
+          fundId: data.fundId,
+          status: { in: ["active", "overdue"] },
         },
-      },
-    });
+        select: { amount: true },
+      });
 
-    if (!fund) return toActionState("ERROR", "Fund not found");
+      const totalActiveLoans = activeLoans.reduce((account, loan) => account + +loan.amount, 0);
 
-    const totalActiveLoans = fund.loans.reduce(
-      (acc, loan) => acc + +loan.amount,
-      0,
-    );
+      const saved = +lockedFund[0].saved;
+      const trueSaved = saved + totalActiveLoans;
+      const maxLoanable = trueSaved * 0.8;
 
-    const trueSaved = +fund.saved + totalActiveLoans;
-    const maxLoanable = trueSaved * 0.8;
-
-    if (totalActiveLoans + amount > maxLoanable)
-      return toActionState(
-        "ERROR",
-        `Loan exceeds 80% of fund savings. Max loanable: ${toCurrencyFromCents(maxLoanable - totalActiveLoans)}`,
-      );
+      if (totalActiveLoans + amount > maxLoanable)
+        throw new Error(
+          `Loan exceeds 80% of fund savings. Max loanable: ${toCurrencyFromCents(maxLoanable - totalActiveLoans)}`,
+        );
 
 
-    if (amount > +fund.saved)
-      return toActionState(
-        "ERROR",
-        `Loan exceeds available fund balance. Available: ${toCurrencyFromCents(+fund.saved)}`
-      )
+      if (amount > saved)
+        throw new Error(
+          `Loan exceeds available fund balance. Available: ${toCurrencyFromCents(saved)}`,
+        );
 
-    await prisma.$transaction([
-      prisma.fund.update({
+      await tx.fund.update({
         where: { id: data.fundId },
         data: { saved: { decrement: amount } },
-      }),
-      prisma.loan.create({
+      });
+
+      await tx.loan.create({
         data: {
           fundId: data.fundId,
           borrower: data.borrower,
@@ -83,8 +81,9 @@ const addLoan = async (_actionState: ActionState, formData: FormData) => {
           status: "active",
           dueDate,
         },
-      })
-    ])
+      });
+
+    })
 
   } catch (error) {
     return fromErrorToActionState(error, formData);
