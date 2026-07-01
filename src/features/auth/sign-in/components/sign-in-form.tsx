@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { PasswordInput } from "../../utils/password-input";
 import { forgotPasswordPagePath, signUpPagePath, savingsPath } from "@/path";
-import { LucideLoaderCircle, LucideLogIn } from "lucide-react";
+import { LucideLoaderCircle, LucideLogIn, LucidePiggyBank } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ const SignInForm = () => {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
         setIsPending(true);
@@ -47,7 +47,7 @@ const SignInForm = () => {
 
             <div className="relative rounded-3xl bg-card border border-border/60 shadow-[0_24px_48px_-12px_rgba(60,52,137,0.25)] px-8 pt-12 pb-8">
                 <div className="absolute -top-7 left-1/2 -translate-x-1/2 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#3C3489] shadow-lg shadow-[#3C3489]/30">
-                    <LucideLogIn className="size-6 text-white" />
+                    <LucidePiggyBank className="size-6 text-white" />
                 </div>
 
                 <div className="flex flex-col items-center gap-y-1 text-center mb-8">

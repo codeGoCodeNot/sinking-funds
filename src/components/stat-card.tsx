@@ -15,7 +15,7 @@ export default function StatCard({
   tone = "default",
 }: StatCardProps) {
   return (
-    <Card className="flex flex-row items-center gap-4 px-5 py-4">
+    <Card className="flex flex-row items-center gap-4 px-5 py-4 bg-muted">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-muted text-xl">
         {emoji}
       </div>

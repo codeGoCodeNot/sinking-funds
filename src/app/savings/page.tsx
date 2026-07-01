@@ -1,6 +1,6 @@
 import StatCard from "@/components/stat-card";
 import AddFundsDialog from "@/features/funds/components/add-funds-dialog";
-import SavingsCard from "@/features/funds/components/savings-card";
+import ActiveSavingsCard from "@/features/funds/components/active-savings-card";
 import getFunds from "@/features/funds/queries/get-funds";
 import { toCurrencyFromCents } from "@/utils/currency";
 
@@ -59,7 +59,7 @@ const SavingsPage = async () => {
           />
         </div>
       </div>
-      <SavingsCard funds={funds} />
+      <ActiveSavingsCard funds={funds} />
     </div>
   );
 };
