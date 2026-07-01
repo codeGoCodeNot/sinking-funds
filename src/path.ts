@@ -9,4 +9,4 @@ export const membersPagePath = () => "/members";
 
 export const signInPagePath = () => "/sign-in";
 export const signUpPagePath = () => "/sign-up";
-export const forgotPasswordPagePath = () => "/forgot-password";
+export const forgotPasswordPagePath = () => "/forgot-password"; 
