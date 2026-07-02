@@ -1,7 +1,7 @@
 "use client";
 
 import { signOut } from "@/lib/auth-client";
-import { signInPagePath } from "@/path";
+import { homePagePath } from "@/path";
 import { LucideLoaderCircle, LucideLogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -18,8 +18,8 @@ const SignOutItem = () => {
             if (error) {
                 toast.error("Failed to sign out. Please try again.");
             } else {
-                toast.success("Signed out successfully.");
-                router.push(signInPagePath());
+                router.push(homePagePath());
+                router.refresh();
             }
         } finally {
             setLoading(false);
@@ -30,12 +30,12 @@ const SignOutItem = () => {
         <button
             onClick={handleLogout}
             disabled={loading}
-            className="flex items-center gap-x-1.5 rounded-full border-[1.5px] border-[#3C3489] bg-[#3C3489] px-4 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="flex items-center gap-2 w-full text-sm text-red-500 hover:text-red-600 disabled:opacity-60"
         >
             {loading ? (
-                <LucideLoaderCircle className="size-3.5 animate-spin text-[#AFA9EC]" />
+                <LucideLoaderCircle className="size-4 animate-spin" />
             ) : (
-                <LucideLogOut className="size-3.5 text-[#AFA9EC]" />
+                <LucideLogOut className="size-4" />
             )}
             Sign out
         </button>

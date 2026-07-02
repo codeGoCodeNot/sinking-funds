@@ -1,11 +1,11 @@
 "use client";
 
+import { useSession } from "@/lib/auth-client";
 import { homePagePath, signInPagePath, signUpPagePath } from "@/path";
+import { LucideArrowRight, LucidePiggyBank, LucideUser } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { LucideArrowRight, LucidePiggyBank, LucideUser } from "lucide-react";
-import { useSession } from "@/lib/auth-client";
-import SignOutItem from "@/features/auth/sign-out/components/sign-out-item";
+import AccountDropdown from "./avatar-dropdown";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -35,7 +35,7 @@ export default function Header() {
 
         <nav className="flex items-center gap-1.5">
           {user ? (
-            <SignOutItem />
+            <AccountDropdown user={user} />
           ) : (
             <><Link
               href={signInPagePath()}
