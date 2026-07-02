@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "@/lib/auth-client";
-import { loansPagePath, savingsPath, signInPagePath, signUpPagePath } from "@/path";
+import { activityPagePath, loansPagePath, membersPagePath, savingsPath, signInPagePath, signUpPagePath } from "@/path";
 import Link from "next/link";
 
 const goalPills = [
@@ -89,6 +89,28 @@ const HomeClient = () => {
                                     Sign in
                                 </Link>
                             </div>
+                        </div>
+                    )}
+                    {!isPending && user && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mx-auto w-full max-w-4xl mt-12">
+                            {[
+                                { href: savingsPath(), emoji: "🏦", title: "Savings", description: "Track your sinking funds" },
+                                { href: loansPagePath(), emoji: "🤝", title: "Loans", description: "Lend to the community" },
+                                { href: activityPagePath(), emoji: "📊", title: "Activity", description: "Recent transactions" },
+                                { href: membersPagePath(), emoji: "👥", title: "Members", description: "View fund members" },
+                            ].map((card) => (
+                                <Link
+                                    key={card.href}
+                                    href={card.href}
+                                    className="flex flex-col gap-3 p-6 rounded-2xl border border-border bg-white transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                                >
+                                    <span className="text-3xl">{card.emoji}</span>
+                                    <div>
+                                        <p className="font-semibold text-lg">{card.title}</p>
+                                        <p className="text-sm text-muted-foreground">{card.description}</p>
+                                    </div>
+                                </Link>
+                            ))}
                         </div>
                     )}
                 </div>

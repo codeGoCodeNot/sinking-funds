@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { signIn } from "@/lib/auth-client";
+import { homePagePath } from "@/path";
 import { useState } from "react";
 import { GoogleIcon } from "../../utils/google-icon";
-import { savingsPath } from "@/path";
 
 const SignInProviderForm = () => {
     const [loadingProvider, setLoadingProvider] = useState<"google" | null>(null);
@@ -16,7 +16,7 @@ const SignInProviderForm = () => {
 
         const { error } = await signIn.social({
             provider,
-            callbackURL: savingsPath(),
+            callbackURL: homePagePath(),
         });
 
         setLoadingProvider(null);

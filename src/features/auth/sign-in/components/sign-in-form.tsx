@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { PasswordInput } from "../../utils/password-input";
-import { forgotPasswordPagePath, signUpPagePath, savingsPath } from "@/path";
+import { forgotPasswordPagePath, signUpPagePath, savingsPath, homePagePath } from "@/path";
 import { LucideLoaderCircle, LucideLogIn, LucidePiggyBank } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -36,7 +36,7 @@ const SignInForm = () => {
             return;
         }
 
-        router.push(savingsPath());
+        router.push(homePagePath());
         router.refresh();
     };
 
