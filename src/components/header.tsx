@@ -4,9 +4,13 @@ import { homePagePath, signInPagePath, signUpPagePath } from "@/path";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LucideArrowRight, LucidePiggyBank, LucideUser } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
+import SignOutItem from "@/features/auth/sign-out/components/sign-out-item";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const { data: session } = useSession();
+  const user = session?.user
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -30,20 +34,23 @@ export default function Header() {
         </Link>
 
         <nav className="flex items-center gap-1.5">
-          <Link
-            href={signInPagePath()}
-            className="flex items-center gap-1.5 rounded-full border-[1.5px] border-border px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-          >
-            <LucideUser className="size-3.5 text-muted-foreground" />
-            Sign in
-          </Link>
-          <Link
-            href={signUpPagePath()}
-            className="flex items-center gap-1.5 rounded-full border-[1.5px] border-[#3C3489] bg-[#3C3489] px-4 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
-          >
-            Get started
-            <LucideArrowRight className="size-3.5 text-[#AFA9EC]" />
-          </Link>
+          {user ? (
+            <SignOutItem />
+          ) : (
+            <><Link
+              href={signInPagePath()}
+              className="flex items-center gap-1.5 rounded-full border-[1.5px] border-border px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            >
+              <LucideUser className="size-3.5 text-muted-foreground" />
+              Sign in
+            </Link><Link
+              href={signUpPagePath()}
+              className="flex items-center gap-1.5 rounded-full border-[1.5px] border-[#3C3489] bg-[#3C3489] px-4 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            >
+                Get started
+                <LucideArrowRight className="size-3.5 text-[#AFA9EC]" />
+              </Link></>
+          )}
         </nav>
       </div>
     </header>
